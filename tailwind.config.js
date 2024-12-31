@@ -12,6 +12,9 @@ export default {
       borderColor: {
         "redish": "hsl(14, 86%, 42%)",
       },
+      textColor: {
+        "redish": "hsl(14, 86%, 42%)",
+      }
     },
   },
   plugins: [],
