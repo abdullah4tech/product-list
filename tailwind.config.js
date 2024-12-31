@@ -7,7 +7,8 @@ export default {
   theme: {
     extend: {
       backgroundColor: {
-        "redish": "hsl(14, 86%, 42%)"
+        "redish": "hsl(14, 86%, 42%)",
+        "body-bg": "hsl(20, 50%, 98%)",
       },
       borderColor: {
         "redish": "hsl(14, 86%, 42%)",
