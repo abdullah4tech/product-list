@@ -15,6 +15,7 @@ export default {
       },
       textColor: {
         "redish": "hsl(14, 86%, 42%)",
+        "rose-1": "hsl(12, 20%, 44%)"
       }
     },
   },

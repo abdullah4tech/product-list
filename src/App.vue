@@ -1,15 +1,30 @@
 <script lang="ts" setup>
 import { computed, reactive, ref } from 'vue';
 
+// Define CartItem type
+type CartItem = {
+  image: {
+    thumbnail: string;
+    mobile: string;
+    tablet: string;
+    desktop: string;
+  };
+  name: string;
+  category: string;
+  price: number;
+  count: number; // Optional property
+};
 
-
+// Define cart as reactive
 const cart = reactive({
-  cartCollections: [] as { image: object; name: string; price: number; }[],
+  cartCollections: [] as CartItem[],
 });
-const isLoaded = ref(false)
-const isVisible = ref(false)
 
-const data = [
+const isLoaded = ref(false);
+const isVisible = ref(false);
+
+
+const data: CartItem[] = [
     {
        "image": {
             "thumbnail": "./src/assets/images/image-waffle-thumbnail.jpg",
@@ -109,15 +124,16 @@ const data = [
         "category": "Panna Cotta",
         "price": 6.50
      }
-]
+];
 
+// Function definitions with proper typing
 const onImageLoad = () => {
   setInterval(() => {
-    isLoaded.value = true
-  }, 1000)
-}
+    isLoaded.value = true;
+  }, 1000);
+};
 
-const isInCart = (item) => {
+const isInCart = (item: CartItem) => {
   return cart.cartCollections.some(
     (cartItem) =>
       cartItem.name === item.name &&
@@ -126,9 +142,7 @@ const isInCart = (item) => {
   );
 };
 
-
-const addCart = (item) => {
-  // Check if an item with the same name and price already exists
+const addCart = (item: CartItem) => {
   const exists = isInCart(item);
   if (!exists) {
     item.count = 1; // Initialize count for the item
@@ -136,8 +150,7 @@ const addCart = (item) => {
   }
 };
 
-
-const removeItemCart = (item) => {
+const removeItemCart = (item: CartItem) => {
   const exists = cart.cartCollections.findIndex(
     (cartItem) =>
       cartItem.name === item.name &&
@@ -150,7 +163,7 @@ const removeItemCart = (item) => {
   }
 };
 
-const removeItem = (item) => {
+const removeItem = (item: CartItem) => {
   const cartItem = cart.cartCollections.find(
     (cartItem) =>
       cartItem.name === item.name &&
@@ -170,7 +183,7 @@ const removeItem = (item) => {
   }
 };
 
-const getItemCount = (item) => {
+const getItemCount = (item: CartItem) => {
   const cartItem = cart.cartCollections.find(
     (cartItem) =>
       cartItem.name === item.name &&
@@ -180,8 +193,7 @@ const getItemCount = (item) => {
   return cartItem ? cartItem.count : 0;
 };
 
-
-const addMoreItem = (item) => {
+const addMoreItem = (item: CartItem) => {
   const cartItem = cart.cartCollections.find(
     (cartItem) => cartItem.name === item.name && cartItem.price === item.price
   );
@@ -191,9 +203,8 @@ const addMoreItem = (item) => {
 };
 
 const getCartTotal = computed(() => {
-  return cart.cartCollections.reduce((acc, item) => acc + item.price * item.count, 0);
-})
-
+  return cart.cartCollections.reduce((acc, item) => acc + item.price * (item.count || 0), 0);
+});
 </script>
 
 
@@ -265,7 +276,7 @@ const getCartTotal = computed(() => {
     <!-- Cart Section -->
     <div>
       <div
-        class="cart-section bg-gray-100 w-full rounded-xl p-6 flex flex-col gap-4"
+        class="cart-section bg-gray-100 rounded-xl p-6 flex flex-col gap-4"
       >
         <h2 class="redish font-bold text-left text-lg sm:text-xl">Your Cart ({{ cart.cartCollections.length }})</h2>
         <div v-show="cart.cartCollections.length === 0" class="flex flex-col items-center">
@@ -305,10 +316,11 @@ const getCartTotal = computed(() => {
   </section>
   <div
     v-if="isVisible"
+
     class="fixed inset-0 flex justify-center items-center bg-gray-800 bg-opacity-50 z-50"
   >
-    <section class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto text-center">
-      <div class="flex justify-center mb-4">
+    <section class="bg-white rounded-lg shadow-md p-8 md:w-[450px] max-w-md mx-auto text-center">
+      <div class="flex mb-4">
         <svg
           width="48"
           height="48"
@@ -326,48 +338,45 @@ const getCartTotal = computed(() => {
           />
         </svg>
       </div>
-      <h2 class="text-xl font-bold text-gray-800">Order Confirmed</h2>
-      <p class="text-gray-600 mt-2">We hope you enjoy your food!</p>
+      <h2 class="md:text-3xl text-2xl text-left font-bold text-gray-800">Order Confirmed</h2>
+      <p class="text-left text-xs text-rose-1 mb-3">We hope you enjoy your food!</p>
 
-      <div class="mt-6 space-y-4">
-        <div
-          v-for="(item, index) in cart.cartCollections"
-          :key="index"
-          class="flex items-center justify-between"
-        >
-          <img
-            :src="item.image.thumbnail"
-            alt="Product image"
-            class="w-12 h-12 rounded-lg object-cover"
-          />
-          <div class="flex-1 ml-4 text-left">
-            <p class="font-semibold text-gray-700">{{ item.name }}</p>
-            <p class="text-sm text-gray-500">
-              {{ item.count }} x ${{ item.price }}
-            </p>
+      <div class="bg-body-bg py-[0.4px] rounded-lg px-4 pb-4 mb-4">
+        <div class="mt-6 space-y-4">
+          <div
+            v-for="(item, index) in cart.cartCollections"
+            :key="index"
+            class="flex justify-between border-b border-gray-200 items-center"
+          >
+            <div class="flex text-xs items-center justify-between pb-4">
+              <img
+                :src="item.image.thumbnail"
+                alt="Product image"
+                class="w-12 h-12 rounded-lg object-cover"
+              />
+              <div class="flex-1 ml-4 text-left">
+                <p class="font-semibold text-gray-700">{{ item.name }}</p>
+                <div class="flex items-center gap-3 text-sm text-gray-500">
+                  <span class="text-redish font-semibold">{{ item.count }}x</span>
+                  <span>@${{ item.price.toFixed(2) }}</span>
+                </div>
+              </div>
+            </div>
+            <p>${{ (item.price * item.count).toFixed(2) }}</p>
           </div>
+        </div>
+
+        <div
+          class="flex justify-between items-center pt-4 font-semibold text-gray-700"
+        >
+          <span>Order Total</span>
+          <span>${{ getCartTotal.toFixed(2) }}</span>
         </div>
       </div>
 
-      <div
-        class="flex justify-between items-center border-t border-gray-200 mt-6 pt-4 font-semibold text-gray-700"
-      >
-        <span>Order Total</span>
-        <span>${{ getCartTotal.toFixed(2) }}</span>
-      </div>
 
-      <button
-        @click="startNewOrder"
-        class="bg-orange-500 text-white font-medium py-2 px-4 rounded-lg mt-6 hover:bg-orange-600"
-      >
-        Start New Order
-      </button>
-      <button
-        @click="isVisible = false"
-        class="text-gray-500 mt-2"
-      >
-        Close
-      </button>
+      <button @click="isVisible = false" class="bg-redish p-3 text-white w-full font-semibold rounded-full">Start New Order</button>
+
     </section>
   </div>
 </template>
@@ -379,7 +388,6 @@ const getCartTotal = computed(() => {
 }
 
 .cart-section {
-  width: 300px;
   overflow-y: auto;
   border-radius: 8px;
   background-color: #fff;
