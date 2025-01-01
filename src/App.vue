@@ -34,7 +34,8 @@ const data: CartItem[] = [
        },
        "name": "Waffle with Berries",
        "category": "Waffle",
-       "price": 6.50
+       "price": 6.50,
+       "count": 0
     },
     {
         "image": {
@@ -45,7 +46,8 @@ const data: CartItem[] = [
         },
         "name": "Vanilla Bean Crème Brûlée",
         "category": "Crème Brûlée",
-        "price": 7.00
+        "price": 7.00,
+        "count": 0
      },
      {
         "image": {
@@ -56,7 +58,8 @@ const data: CartItem[] = [
         },
         "name": "Macaron Mix of Five",
         "category": "Macaron",
-        "price": 8.00
+       "price": 8.00,
+        "count": 0
      },
      {
         "image": {
@@ -67,7 +70,8 @@ const data: CartItem[] = [
         },
         "name": "Classic Tiramisu",
         "category": "Tiramisu",
-        "price": 5.50
+        "price": 5.50,
+        "count": 0
      },
      {
         "image": {
@@ -78,7 +82,8 @@ const data: CartItem[] = [
         },
         "name": "Pistachio Baklava",
         "category": "Baklava",
-        "price": 4.00
+        "price": 4.00,
+        "count": 0
      },
      {
         "image": {
@@ -89,7 +94,8 @@ const data: CartItem[] = [
         },
         "name": "Lemon Meringue Pie",
         "category": "Pie",
-        "price": 5.00
+        "price": 5.00,
+        "count": 0
      },
      {
         "image": {
@@ -100,7 +106,8 @@ const data: CartItem[] = [
         },
         "name": "Red Velvet Cake",
         "category": "Cake",
-        "price": 4.50
+        "price": 4.50,
+        "count": 0
      },
      {
         "image": {
@@ -111,7 +118,8 @@ const data: CartItem[] = [
         },
         "name": "Salted Caramel Brownie",
         "category": "Brownie",
-        "price": 4.50
+        "price": 4.50,
+        "count": 0
      },
      {
         "image": {
@@ -122,7 +130,8 @@ const data: CartItem[] = [
         },
         "name": "Vanilla Panna Cotta",
         "category": "Panna Cotta",
-        "price": 6.50
+       "price": 6.50,
+        "count": 0
      }
 ];
 
@@ -145,7 +154,7 @@ const isInCart = (item: CartItem) => {
 const addCart = (item: CartItem) => {
   const exists = isInCart(item);
   if (!exists) {
-    item.count = 1; // Initialize count for the item
+    item.count = item.count || 1; // Initialize count for the item
     cart.cartCollections.unshift(item); // Add the item to the array
   }
 };
@@ -205,6 +214,7 @@ const addMoreItem = (item: CartItem) => {
 const getCartTotal = computed(() => {
   return cart.cartCollections.reduce((acc, item) => acc + item.price * (item.count || 0), 0);
 });
+
 </script>
 
 
@@ -231,7 +241,18 @@ const getCartTotal = computed(() => {
             <div
               v-if="!isInCart(i)"
               class="absolute flex -bottom-4 left-1/2 transform -translate-x-1/2 w-32 items-center justify-center bg-white border-[1.5px] opacity-100 p-2 rounded-full shadow-lg cursor-pointer select-none"
-              @click="addCart({ image: { thumbnail: i.image.thumbnail }, name: i.name, price: i.price })"
+              @click="addCart({
+                        image: {
+                          thumbnail: i.image.thumbnail,
+                          mobile: i.image.mobile,
+                          tablet: i.image.tablet,
+                          desktop: i.image.desktop
+                        },
+                        name: i.name,
+                        category: i.category, // Make sure `category` is available
+                        price: i.price,
+                        count: 1
+                      })"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="21" height="20" fill="none" viewBox="0 0 21 20" class="mr-2 size-4">
                 <g fill="#C73B0F" clip-path="url(#a)">
@@ -276,7 +297,7 @@ const getCartTotal = computed(() => {
     <!-- Cart Section -->
     <div>
       <div
-        class="cart-section bg-gray-100 rounded-xl p-6 flex flex-col gap-4"
+        class="cart-section bg-gray-100 md:w-80 rounded-xl p-6 flex flex-col gap-4"
       >
         <h2 class="redish font-bold text-left text-lg sm:text-xl">Your Cart ({{ cart.cartCollections.length }})</h2>
         <div v-show="cart.cartCollections.length === 0" class="flex flex-col items-center">
